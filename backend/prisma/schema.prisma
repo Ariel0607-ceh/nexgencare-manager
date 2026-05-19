@@ -24,6 +24,7 @@ model User {
   auditLogs         AuditLog[]
   consentForms      ConsentForm[]
   handoverRecords   HandoverRecord[]
+  @@map("users")
 }
 
 model Client {
@@ -37,6 +38,7 @@ model Client {
 
   // Relations
   jobs      Job[]
+  @@map("clients")
 }
 
 model Device {
@@ -50,6 +52,8 @@ model Device {
 
   // Relations
   job          Job?
+    @@map("devices")
+
 }
 
 model Job {
@@ -91,6 +95,8 @@ model Job {
   
   // Audit logs
   auditLogs       AuditLog[]
+    @@map("jobs")
+
 }
 
 model ChecklistItem {
@@ -108,6 +114,8 @@ model ChecklistItem {
   // Relations
   job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
   user        User?    @relation(fields: [completedBy], references: [id])
+  @@map("job_checklists")
+
 }
 
 model MediaFile {
@@ -126,6 +134,8 @@ model MediaFile {
   // Relations
   job         Job         @relation(fields: [jobId], references: [id], onDelete: Cascade)
   user        User        @relation(fields: [uploadedBy], references: [id])
+  @@map("media_files")
+
 }
 
 model ConsentForm {
@@ -146,6 +156,8 @@ model ConsentForm {
   // Relations
   job                   Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
   user                  User     @relation(fields: [createdBy], references: [id])
+  @@map("consent_forms")
+
 }
 
 model HandoverRecord {
@@ -167,6 +179,8 @@ model HandoverRecord {
   job                 Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
   user                User?    @relation(fields: [staffId], references: [id])
   staffId             String?
+  @@map("handover_records")
+
 }
 
 model AuditLog {
@@ -183,6 +197,8 @@ model AuditLog {
   // Relations
   job         Job?     @relation(fields: [jobId], references: [id], onDelete: SetNull)
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  @@map("audit_logs")
+
 }
 
 enum Role {
