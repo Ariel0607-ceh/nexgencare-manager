@@ -11,20 +11,22 @@ const router = Router();
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log('Login attempt:', email, 'Password provided:', password ? 'yes' : 'no');
+    console.log('Login attempt:', email);
 
-    const user = await prisma.user.findUnique({
+    // Try to find user by email OR by name (username)
+    let user = await prisma.user.findUnique({
       where: { email },
     });
 
-    console.log('User found:', !!user);
-    if (user) {
-      console.log('User columns:', Object.keys(user));
-      console.log('Password hash starts with:', user.password?.substring(0, 10));
+    // If not found by email, try by name
+    if (!user) {
+      user = await prisma.user.findFirst({
+        where: { name: email }, // email field contains the username
+      });
     }
 
     if (!user) {
-      console.log('No user found for email:', email);
+      console.log('No user found for:', email);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -52,7 +54,7 @@ router.post('/login', async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Login failed', detail: (error as Error).message });
+    res.status(500).json({ error: 'Login failed' });
   }
 });
 
