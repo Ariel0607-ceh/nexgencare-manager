@@ -36,7 +36,37 @@ app.get('/api/health', (_req, res) => {
 });
 
 
-
+// TEMPORARY: Force reset admin password (remove after using once)
+app.get('/api/reset-password', async (_req, res) => {
+  try {
+    const bcrypt = await import('bcryptjs');
+    const hashed = await bcrypt.default.hash('123456', 10);
+    
+    const user = await prisma.user.upsert({
+      where: { email: 'zihan@gmail.com' },
+      update: { 
+        password: hashed,      // <-- FORCE overwrite
+        name: 'zihan',
+        role: 'ADMIN'
+      },
+      create: {
+        email: 'zihan@gmail.com',
+        password: hashed,
+        name: 'zihan',
+        role: 'ADMIN',
+      },
+    });
+    
+    res.json({ 
+      success: true, 
+      message: 'Password reset to 123456',
+      user: { id: user.id, email: user.email, name: user.name }
+    });
+  } catch (err: any) {
+    console.error('Reset error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 
 // Serve static files from the React app
