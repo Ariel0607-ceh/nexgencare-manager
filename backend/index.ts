@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
 
 // Import routes
 import authRoutes from './routes/auth';
@@ -36,12 +35,12 @@ app.get('/api/health', (_req, res) => {
 });
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../../dist')));
+//app.use(express.static(path.join(__dirname, '../../dist')));
 
 // Handle React routing, return all requests to React app
-app.get('*', (_req, res) => {
+/*app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, '../../dist/index.html'));
-});
+});*/
 
 // Error handling
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
