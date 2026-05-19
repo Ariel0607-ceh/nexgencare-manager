@@ -8,7 +8,6 @@ import {
   LayoutDashboard,
   Users,
   ClipboardList,
-  FileText,
   Settings,
   LogOut,
   Menu,

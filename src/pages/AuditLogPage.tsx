@@ -14,7 +14,7 @@ import {
   CalendarDays,
   Calendar,
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RePieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RePieChart, Pie, Cell } from 'recharts';
 
 const COLORS = ['#10b981', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6', '#6b7280'];
 
@@ -45,7 +45,6 @@ export default function StatisticsDashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [revenueView, setRevenueView] = useState<TimeView>('month');
   const [jobsView, setJobsView] = useState<TimeView>('month');
-  const [statusView, setStatusView] = useState<TimeView>('month');
 
   useEffect(() => {
     loadStats();
@@ -301,7 +300,7 @@ export default function StatisticsDashboardPage() {
                   fill="#8884d8"
                   dataKey="count"
                 >
-                  {stats.jobsByStatus.map((entry, index) => (
+                  {stats.jobsByStatus.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

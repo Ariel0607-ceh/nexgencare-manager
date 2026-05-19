@@ -18,7 +18,6 @@ import {
   Search,
   Plus,
   Laptop,
-  ArrowRight,
   Filter,
   Trash2,
   Eye,
