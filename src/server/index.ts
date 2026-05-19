@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 // Import routes
 import authRoutes from './routes/auth';
@@ -12,9 +11,6 @@ import mediaRoutes from './routes/media';
 import consentRoutes from './routes/consent';
 import handoverRoutes from './routes/handover';
 import auditRoutes from './routes/audit';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
