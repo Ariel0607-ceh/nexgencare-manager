@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   ArrowLeft,
@@ -22,12 +24,6 @@ import {
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import QRCode from 'react-qr-code';
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://nexgencare-manager.onrender.com';
 
