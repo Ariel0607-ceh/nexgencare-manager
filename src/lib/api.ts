@@ -1,9 +1,7 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosError } from 'axios';
 
-const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://nexgencare-manager.onrender.com' 
-  : 'http://localhost:3001';
+const API_BASE_URL = 'https://nexgencare-manager.onrender.com';
   
 class ApiClient {
   private client: AxiosInstance;

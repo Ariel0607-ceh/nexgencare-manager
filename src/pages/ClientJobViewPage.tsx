@@ -22,6 +22,14 @@ import {
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import QRCode from 'react-qr-code';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://nexgencare-manager.onrender.com';
 
 const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
   RECEIVED: { label: 'Received', variant: 'secondary' },
@@ -60,7 +68,8 @@ export default function ClientJobViewPage() {
 
   const loadJob = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/public/jobs/${jobId}`);
+      const response = await fetch(`${API_BASE_URL}/api/public/jobs/${jobId}`);
+
       
       if (response.ok) {
         const data = await response.json();
@@ -70,7 +79,7 @@ export default function ClientJobViewPage() {
       }
       
       const searchResponse = await fetch(
-        `http://localhost:3001/api/public/jobs/search?q=${encodeURIComponent(jobId!)}`
+        `${API_BASE_URL}/api/public/jobs/search?q=${encodeURIComponent(jobId!)}`
       );
       
       if (!searchResponse.ok) {
@@ -86,7 +95,7 @@ export default function ClientJobViewPage() {
       
       if (foundJob) {
         const detailResponse = await fetch(
-          `http://localhost:3001/api/public/jobs/${foundJob.id}`
+          `${API_BASE_URL}/api/public/jobs/${foundJob.id}`
         );
         if (detailResponse.ok) {
           const fullJob = await detailResponse.json();
@@ -163,7 +172,7 @@ export default function ClientJobViewPage() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:3001/api/public/handover/${jobId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/public/handover/${jobId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -515,6 +524,8 @@ export default function ClientJobViewPage() {
       {/* Media Lightbox */}
       <Dialog open={lightbox.open} onOpenChange={(open) => setLightbox({ ...lightbox, open })}>
         <DialogContent className="max-w-5xl w-full p-0 overflow-hidden bg-black/95 border-none">
+        <DialogTitle className="sr-only">Media Viewer</DialogTitle>
+        <DialogDescription className="sr-only">View uploaded media files</DialogDescription>
           <div className="flex items-center justify-center min-h-[300px] max-h-[85vh] p-2">
             {lightbox.type === 'IMAGE' ? (
               <img
