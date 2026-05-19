@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '@/lib/api';
 import type { User } from '@/types';
+import { useNavigate } from 'react-router-dom';
+
 
 interface AuthContextType {
   user: User | null;
@@ -13,6 +15,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
+
   const [state, setState] = useState<{
     user: User | null;
     isLoading: boolean;
@@ -53,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     localStorage.removeItem('token');
     setState({ user: null, isLoading: false, isInitialized: true });
-    window.location.href = '/login';
+    navigate('/login');
   };
 
   return (
