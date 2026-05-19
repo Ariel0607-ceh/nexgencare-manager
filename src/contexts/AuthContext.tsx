@@ -12,38 +12,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const ADMIN_EMAIL = 'admin@nexgencare.com';
-const ADMIN_PASSWORD = 'admin123';
-const ADMIN_USER: User = {
-  id: 'admin-1',
-  email: ADMIN_EMAIL,
-  name: 'Zihan',
-  role: 'ADMIN',
-};
-
-function generateToken(): string {
-  const payload = btoa(JSON.stringify({ 
-    userId: ADMIN_USER.id, 
-    email: ADMIN_USER.email, 
-    role: ADMIN_USER.role, 
-    exp: Date.now() + 7 * 24 * 60 * 60 * 1000 
-  }));
-  const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }));
-  return `${header}.${payload}.`;
-}
-
-function parseToken(token: string) {
-  try {
-    const parts = token.split('.');
-    if (parts.length < 2) return null;
-    const payload = JSON.parse(atob(parts[1]));
-    if (payload.exp && payload.exp < Date.now()) return null;
-    return payload;
-  } catch {
-    return null;
-  }
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<{
     user: User | null;
@@ -64,19 +32,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Try API first
       try {
         const data = await api.getMe();
         setState({ user: data.user, isLoading: false, isInitialized: true });
       } catch {
-        // Fallback to local token
-        const payload = parseToken(token);
-        if (payload?.email === ADMIN_EMAIL) {
-          setState({ user: ADMIN_USER, isLoading: false, isInitialized: true });
-        } else {
-          localStorage.removeItem('token');
-          setState({ user: null, isLoading: false, isInitialized: true });
-        }
+        localStorage.removeItem('token');
+        setState({ user: null, isLoading: false, isInitialized: true });
       }
     };
 
@@ -84,26 +45,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Try real API
-    try {
-      const data = await api.login(email, password);
-      localStorage.setItem('token', data.token);
-      setState({ user: data.user, isLoading: false, isInitialized: true });
-    } catch {
-      // Local fallback
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        localStorage.setItem('token', generateToken());
-        setState({ user: ADMIN_USER, isLoading: false, isInitialized: true });
-      } else {
-        throw new Error('Invalid credentials');
-      }
-    }
+    const data = await api.login(email, password);
+    localStorage.setItem('token', data.token);
+    setState({ user: data.user, isLoading: false, isInitialized: true });
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     setState({ user: null, isLoading: false, isInitialized: true });
-    window.location.href = '/';
+    window.location.href = '/login';
   };
 
   return (

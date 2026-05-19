@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,22 +19,18 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username || !password) {
+    if (!email || !password) {
       toast.error('Please fill in all fields');
       return;
     }
 
-    // Use zihan/1234 for admin login
-    const email = username === 'zihan' ? 'admin@nexgencare.com' : username;
-    const adminPassword = password === '1234' ? 'admin123' : password;
-
     setIsLoading(true);
     try {
-      await login(email, adminPassword);
+      await login(email, password);
       toast.success('Login successful');
       navigate('/admin');
     } catch (error: any) {
-      toast.error('Invalid username or password');
+      toast.error('Invalid email or password');
     } finally {
       setIsLoading(false);
     }
@@ -43,7 +39,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
       <div className="w-full max-w-md">
-        {/* Logo - Full size with subtitle */}
         <div className="flex items-center justify-center mb-8">
           <img 
             src="/logo.png" 
@@ -62,13 +57,13 @@ export default function LoginPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="email">Email or Username</Label>
                 <Input
-                  id="username"
+                  id="email"
                   type="text"
-                  placeholder="Enter your username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your email or username"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>

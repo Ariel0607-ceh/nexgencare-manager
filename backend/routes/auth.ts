@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { prisma } from '../utils/prisma';
 import { generateToken } from '../utils/jwt';
@@ -8,20 +8,18 @@ import type { AuthRequest } from '../middleware/auth';
 const router = Router();
 
 // Login
-router.post('/login', async (req, res) => {
+router.post('/login', async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body as { email: string; password: string };
     console.log('Login attempt:', email);
 
-    // Try to find user by email OR by name (username)
     let user = await prisma.user.findUnique({
       where: { email },
     });
 
-    // If not found by email, try by name
     if (!user) {
       user = await prisma.user.findFirst({
-        where: { name: email }, // email field contains the username
+        where: { name: email },
       });
     }
 
@@ -59,13 +57,18 @@ router.post('/login', async (req, res) => {
 });
 
 // Register (Admin only)
-router.post('/register', authenticate, async (req: AuthRequest, res) => {
+router.post('/register', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     if (req.user?.role !== 'ADMIN') {
       return res.status(403).json({ error: 'Admin access required' });
     }
 
-    const { email, password, name, role = 'ADMIN' } = req.body;
+    const { email, password, name, role = 'ADMIN' } = req.body as { 
+      email: string; 
+      password: string; 
+      name: string; 
+      role?: 'ADMIN' | 'CLIENT';
+    };
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -101,7 +104,7 @@ router.post('/register', authenticate, async (req: AuthRequest, res) => {
 });
 
 // Get current user
-router.get('/me', authenticate, async (req: AuthRequest, res) => {
+router.get('/me', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.userId },
@@ -125,9 +128,12 @@ router.get('/me', authenticate, async (req: AuthRequest, res) => {
 });
 
 // Change password
-router.post('/change-password', authenticate, async (req: AuthRequest, res) => {
+router.post('/change-password', authenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const { currentPassword, newPassword } = req.body;
+    const { currentPassword, newPassword } = req.body as { 
+      currentPassword: string; 
+      newPassword: string 
+    };
 
     const user = await prisma.user.findUnique({
       where: { id: req.user!.userId },
