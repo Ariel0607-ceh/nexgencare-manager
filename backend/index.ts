@@ -36,33 +36,7 @@ app.get('/api/health', (_req, res) => {
 });
 
 
-// TEMPORARY: One-click database seed (remove after using)
-app.get('/api/run-seed', async (_req, res) => {
-  try {
-    const bcrypt = await import('bcryptjs');
-    const hashed = await bcrypt.default.hash('123456', 10);
-    
-    const user = await prisma.user.upsert({
-      where: { email: 'zihan@gmail.com' },
-      update: {},
-      create: {
-        email: 'zihan@gmail.com',
-        password: hashed,
-        name: 'Zihan',
-        role: 'ADMIN',
-      },
-    });
-    
-    res.json({ 
-      success: true, 
-      message: 'User seeded successfully', 
-      user: { id: user.id, email: user.email, name: user.name, role: user.role } 
-    });
-  } catch (err: any) {
-    console.error('Seed error:', err);
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
+
 
 
 // Serve static files from the React app
