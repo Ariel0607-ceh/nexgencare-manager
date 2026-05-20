@@ -81,7 +81,7 @@ router.post('/', authenticate, async (req: AuthRequest, res) => {
 });
 
 // Complete handover (mark job as completed)
-router.post('/:id/complete', authenticate, async (req: AuthRequest, res) => {
+router.patch('/:id/complete', authenticate, async (req: AuthRequest, res) => {
   try {
     const id = req.params.id as string;
 

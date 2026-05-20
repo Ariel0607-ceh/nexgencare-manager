@@ -26,8 +26,8 @@ app.use('/api/clients', clientRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/checklist', checklistRoutes);
 app.use('/api/media', mediaRoutes);
-app.use('/api/consent', consentRoutes);
-app.use('/api/handover', handoverRoutes);
+app.use('/api/consent-forms', consentRoutes);
+app.use('/api/handover-records', handoverRoutes);
 app.use('/api/audit', auditRoutes);
 
 // Health check
