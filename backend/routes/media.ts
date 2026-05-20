@@ -38,7 +38,7 @@ router.get('/job/:jobId', authenticate, async (req: AuthRequest, res) => {
 });
 
 // Upload media file
-router.post('/upload', authenticate, async (req: AuthRequest, res) => {
+router.post('/', authenticate, async (req: AuthRequest, res) => {
   try {
     const { jobId, type, category, fileData, filename, mimeType } = req.body;
 
