@@ -36,47 +36,6 @@ app.get('/api/health', (_req, res) => {
 });
 
 
-// TEMPORARY: Force reset admin password (remove after using once)
-app.get('/api/reset-password', async (_req, res) => {
-  try {
-    const bcrypt = await import('bcryptjs');
-    const hashed = await bcrypt.default.hash('123456', 10);
-    
-    const user = await prisma.user.upsert({
-      where: { email: 'zihan@gmail.com' },
-      update: { 
-        password: hashed,      // <-- FORCE overwrite
-        name: 'zihan',
-        role: 'ADMIN'
-      },
-      create: {
-        email: 'zihan@gmail.com',
-        password: hashed,
-        name: 'zihan',
-        role: 'ADMIN',
-      },
-    });
-    
-    res.json({ 
-      success: true, 
-      message: 'Password reset to 123456',
-      user: { id: user.id, email: user.email, name: user.name }
-    });
-  } catch (err: any) {
-    console.error('Reset error:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-// Serve static files from the React app
-//app.use(express.static(path.join(__dirname, '../../dist')));
-
-// Handle React routing, return all requests to React app
-/*app.get('*', (_req, res) => {
-  res.sendFile(path.join(__dirname, '../../dist/index.html'));
-});*/
-
 // ==================== PUBLIC API (No Auth Required) ====================
 app.get('/api/public/jobs/search', async (req, res) => {
   try {
@@ -122,6 +81,75 @@ app.get('/api/public/jobs/search', async (req, res) => {
   } catch (err) {
     console.error('Public search error:', err);
     res.status(500).json({ error: 'Search failed' });
+  }
+});
+
+// ==================== GET PUBLIC JOB BY ID ====================
+app.get('/api/public/jobs/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Try finding by raw database id first, fallback to the human-readable jobId if needed
+    const job = await prisma.job.findFirst({
+      where: {
+        OR: [
+          { id: id },
+          { jobId: id }
+        ]
+      },
+      include: {
+        client: {
+          select: {
+            fullName: true,
+            phone: true,
+          }
+        },
+        device: {
+          select: {
+            brand: true,
+            model: true,
+          }
+        },
+        checklist: {
+          orderBy: {
+            createdAt: 'asc' // Keeps your checklist steps in chronological order
+          }
+        }
+      }
+    });
+
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    // Standardize structure for your frontend component
+    res.json({
+      id: job.id,
+      jobId: job.jobId,
+      status: job.status,
+      notes: job.notes,
+      receivedAt: job.receivedAt,
+      completedAt: job.completedAt,
+      client: {
+        fullName: job.client?.fullName || 'Unknown Client',
+        phone: job.client?.phone || 'N/A'
+      },
+      device: {
+        brand: job.device?.brand || '',
+        model: job.device?.model || ''
+      },
+      // Maps your checklist items directly so the frontend can display progress checkboxes safely
+      checklist: job.checklist.map(item => ({
+        id: item.id,
+        title: item.title,
+        completed: item.completed,
+        notes: item.notes,
+        completedAt: item.completedAt
+      }))
+    });
+  } catch (err) {
+    console.error('Fetch public job error:', err);
+    res.status(500).json({ error: 'Failed to retrieve job progress' });
   }
 });
 
