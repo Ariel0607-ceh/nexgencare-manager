@@ -87,44 +87,35 @@ app.get('/api/public/jobs/search', async (req, res) => {
 });
 
 // ==================== GET PUBLIC JOB BY ID ====================
+// 🚀 FIXED: Public Job Status Tracking endpoint inside index.ts
 app.get('/api/public/jobs/:id', async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
 
-    // Try finding by raw database id first, fallback to the human-readable jobId if needed
-    const job = await prisma.job.findFirst({
-      where: {
-        OR: [
-          { id: id },
-          { jobId: id }
-        ]
-      },
+    const job = await prisma.job.findUnique({
+      where: { id },
       include: {
-        client: {
-          select: {
-            fullName: true,
-            phone: true,
-          }
-        },
-        device: {
-          select: {
-            brand: true,
-            model: true,
-          }
-        },
+        client: true,
+        device: true,
         checklist: {
           orderBy: {
-            createdAt: 'asc' // Keeps your checklist steps in chronological order
+            createdAt: 'asc'
+          }
+        },
+        // 🚀 NEW: Include media files in the database query!
+        mediaFiles: {
+          orderBy: {
+            createdAt: 'desc'
           }
         }
       }
     });
 
     if (!job) {
-      return res.status(404).json({ error: 'Job not found' });
+      return res.status(404).json({ error: 'Job record profile not found' });
     }
 
-    // Standardize structure for your frontend component
+    // Standardize structure for your frontend public viewer component
     res.json({
       id: job.id,
       jobId: job.jobId,
@@ -140,18 +131,26 @@ app.get('/api/public/jobs/:id', async (req, res) => {
         brand: job.device?.brand || '',
         model: job.device?.model || ''
       },
-      // Maps your checklist items directly so the frontend can display progress checkboxes safely
       checklist: job.checklist.map(item => ({
         id: item.id,
         title: item.title,
         completed: item.completed,
         notes: item.notes,
         completedAt: item.completedAt
+      })),
+      // 🚀 NEW: Map the media records into the payload returned to the client window
+      mediaFiles: job.mediaFiles.map(file => ({
+        id: file.id,
+        url: file.url,
+        type: file.type, // 'IMAGE' or 'VIDEO'
+        category: file.category, // 'BEFORE' | 'DURING' | 'AFTER'
+        filename: file.filename,
+        createdAt: file.createdAt
       }))
     });
   } catch (err) {
-    console.error('Fetch public job error:', err);
-    res.status(500).json({ error: 'Failed to retrieve job progress' });
+    console.error('Fetch public job tracking metrics error:', err);
+    res.status(500).json({ error: 'Failed to retrieve complete job progress history' });
   }
 });
 
