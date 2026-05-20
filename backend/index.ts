@@ -77,6 +77,47 @@ app.get('/api/reset-password', async (_req, res) => {
   res.sendFile(path.join(__dirname, '../../dist/index.html'));
 });*/
 
+// ==================== PUBLIC API (No Auth Required) ====================
+app.get('/api/public/jobs/search', async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || (q as string).trim().length < 2) {
+      return res.status(400).json({ error: 'Please enter at least 2 characters' });
+    }
+
+    const searchTerm = `%${(q as string).trim()}%`;
+    
+    const result = await prisma.$queryRaw`
+      SELECT j.id, j.job_id, j.status, j.brand, j.model, 
+             c.full_name as client_name, c.phone as client_phone
+      FROM jobs j
+      LEFT JOIN clients c ON j.client_id = c.id
+      WHERE j.job_id ILIKE ${searchTerm}
+         OR c.full_name ILIKE ${searchTerm}
+         OR c.phone ILIKE ${searchTerm}
+      ORDER BY j.created_at DESC
+      LIMIT 20
+    `;
+
+    res.json((result as any[]).map(r => ({
+      id: r.id.toString(),
+      jobId: r.job_id,
+      status: r.status,
+      client: { 
+        fullName: r.client_name || 'Unknown Client', 
+        phone: r.client_phone || 'N/A' 
+      },
+      device: { 
+        brand: r.brand || '', 
+        model: r.model || '' 
+      }
+    })));
+  } catch (err) {
+    console.error('Public search error:', err);
+    res.status(500).json({ error: 'Search failed' });
+  }
+}); 
+
 // Error handling
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error('Server error:', err);
