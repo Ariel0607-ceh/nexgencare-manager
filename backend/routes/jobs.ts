@@ -178,83 +178,92 @@ router.get('/:id', authenticate, async (req: AuthRequest, res) => {
 });
 
 // Create job (Device Intake)
+//FIXED: POST /api/jobs inside src/routes/jobs.ts
 router.post('/', authenticate, async (req: AuthRequest, res) => {
   try {
-    const {
-      clientId,
-      brand,
-      model,
-      serialNumber,
-      deviceType,
-      scratches,
-      damageNotes,
-      reportedIssues,
-      notes,
+    const { 
+      clientId, 
+      brand, 
+      model, 
+      serialNumber, 
+      deviceType, 
+      notes, 
+      consentForm 
     } = req.body;
 
-    const jobId = await generateJobId();
+    if (!clientId || !brand || !model) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
 
-    // Create device first
-    const device = await prisma.device.create({
-      data: {
-        brand,
-        model,
-        serialNumber,
-        deviceType: deviceType || 'LAPTOP',
-      },
+    const uniqueJobId = await generateJobId();
+
+    // Execute everything inside a transaction to prevent partial saves
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Create the device entry
+      const device = await tx.device.create({
+        data: {
+          brand,
+          model,
+          serialNumber,
+          deviceType: deviceType || 'LAPTOP',
+        },
+      });
+
+      // 2. Create the job entry linked to client and device
+      const job = await tx.job.create({
+        data: {
+          jobId: uniqueJobId,
+          clientId,
+          deviceId: device.id,
+          status: 'RECEIVED',
+          notes,
+          createdById: req.user!.userId,
+        },
+      });
+
+      // 3. Create default checklist items (Adjust titles as necessary for your shop workflows)
+      const defaultTasks = [
+        'Initial Inspection & Diagnostic Run',
+        'External and Internal Dust Cleaning',
+        'Thermal Paste Replacement',
+        'Component Assembly & Stability Testing'
+      ];
+
+      await tx.checklistItem.createMany({
+        data: defaultTasks.map((title) => ({
+          jobId: job.id,
+          title,
+        })),
+      });
+
+      // 4. NEW: If consent data exists, save it directly to the database!
+      if (consentForm) {
+        await tx.consentForm.create({
+          data: {
+            jobId: job.id,
+            voluntaryHandover: consentForm.voluntaryHandover ?? true,
+            allowCleaning: consentForm.allowCleaning ?? true,
+            acknowledgeRisk: consentForm.acknowledgeRisk ?? true,
+            confirmCondition: consentForm.confirmCondition ?? true,
+            clientSignature: consentForm.clientSignature,
+            clientSignedAt: consentForm.clientSignature ? new Date() : null,
+            staffWitnessName: consentForm.staffWitnessName || 'Staff Member',
+            createdBy: req.user!.userId,
+          },
+        });
+      }
+
+      return job;
     });
 
-    // Create job with device
-    const job = await prisma.job.create({
-      data: {
-        jobId,
-        clientId,
-        deviceId: device.id,
-        createdById: req.user!.userId,
-        scratches,
-        damageNotes,
-        reportedIssues,
-        notes,
-        status: 'RECEIVED',
-      },
-      include: {
-        client: true,
-        device: true,
-      },
+    await logAction('JOB_CREATED', 'Job', result.id, req.user?.userId, result.id, {
+      jobId: uniqueJobId,
     });
 
-    // Create default checklist items for laptop cleaning
-    const checklistItems = [
-      { title: 'Remove internal fan (4-6 screws)', description: 'Carefully remove the internal cooling fan' },
-      { title: 'Remove heatsink (8-12 screws)', description: 'Detach the heatsink assembly from the motherboard' },
-      { title: 'Clean old CPU thermal paste', description: 'Remove all old thermal paste from CPU' },
-      { title: 'Clean old GPU thermal paste', description: 'Remove all old thermal paste from GPU' },
-      { title: 'Repaste CPU with new thermal paste', description: 'Apply new thermal paste to CPU' },
-      { title: 'Repaste GPU with new thermal paste', description: 'Apply new thermal paste to GPU' },
-      { title: 'Reattach heatsink (8-12 screws)', description: 'Secure heatsink back in place' },
-      { title: 'Reattach internal fan (4-6 screws)', description: 'Secure cooling fan back in place' },
-      { title: 'Check battery connection', description: 'Verify battery is properly connected' },
-      { title: 'Check all cables near fan', description: 'Ensure all cables are properly seated' },
-    ];
-
-    await prisma.checklistItem.createMany({
-      data: checklistItems.map((item) => ({
-        ...item,
-        jobId: job.id,
-      })),
-    });
-
-    await logAction('JOB_CREATED', 'Job', job.id, req.user?.userId, job.id, {
-      jobId: job.jobId,
-      clientId,
-      deviceBrand: brand,
-      deviceModel: model,
-    });
-
-    res.status(201).json(job);
+    res.status(201).json(result);
   } catch (error) {
-    console.error('Create job error:', error);
-    res.status(500).json({ error: 'Failed to create job' });
+    console.error('Create job and save intake consent form error:', error);
+    res.status(500).json({ error: 'Failed to fully register new job file' });
   }
 });
 

@@ -11,6 +11,7 @@ import consentRoutes from './routes/consent';
 import handoverRoutes from './routes/handover';
 import auditRoutes from './routes/audit';
 import { prisma } from './utils/prisma';
+import statsRoutes from './routes/stats';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -29,6 +30,7 @@ app.use('/api/media', mediaRoutes);
 app.use('/api/consent-forms', consentRoutes);
 app.use('/api/handover-records', handoverRoutes);
 app.use('/api/audit', auditRoutes);
+app.use('/api/stats', statsRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {
