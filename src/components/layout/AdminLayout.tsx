@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import {
   LayoutDashboard,
   Users,
@@ -115,6 +115,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Navigation Menu</SheetTitle>
+            <SheetDescription>Main admin navigation sidebar</SheetDescription>
+          </SheetHeader>
           <NavContent />
         </SheetContent>
       </Sheet>

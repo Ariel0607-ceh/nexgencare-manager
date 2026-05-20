@@ -1308,7 +1308,9 @@ export default function JobDetailPage() {
 
       {/* Media Lightbox */}
       <Dialog open={lightbox.open} onOpenChange={(open) => setLightbox({ ...lightbox, open })}>
-        <DialogContent className="max-w-5xl w-full p-0 overflow-hidden bg-black/95 border-none">
+  <DialogContent className="max-w-5xl w-full p-0 overflow-hidden bg-black/95 border-none">
+    <DialogTitle className="sr-only">Media Viewer</DialogTitle>
+    <DialogDescription className="sr-only">View uploaded media files</DialogDescription>
           <div className="flex items-center justify-center min-h-[300px] max-h-[85vh] p-2">
             {lightbox.type === 'IMAGE' ? (
               <img

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RePieChart, Pie, Cell } from 'recharts';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://nexgencare-manager.onrender.com';
 const COLORS = ['#10b981', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6', '#6b7280'];
 
 interface DashboardStats {
@@ -52,7 +53,7 @@ export default function StatisticsDashboardPage() {
 
   const loadStats = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/stats/dashboard', {
+      const response = await fetch(`${API_BASE_URL}/api/stats/dashboard`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
