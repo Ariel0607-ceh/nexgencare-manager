@@ -85,38 +85,45 @@ app.get('/api/public/jobs/search', async (req, res) => {
       return res.status(400).json({ error: 'Please enter at least 2 characters' });
     }
 
-    const searchTerm = `%${(q as string).trim()}%`;
-    
-    const result = await prisma.$queryRaw`
-      SELECT j.id, j.job_id, j.status, j.brand, j.model, 
-             c.full_name as client_name, c.phone as client_phone
-      FROM jobs j
-      LEFT JOIN clients c ON j.client_id = c.id
-      WHERE j.job_id ILIKE ${searchTerm}
-         OR c.full_name ILIKE ${searchTerm}
-         OR c.phone ILIKE ${searchTerm}
-      ORDER BY j.created_at DESC
-      LIMIT 20
-    `;
+    const queryStr = (q as string).trim();
 
-    res.json((result as any[]).map(r => ({
-      id: r.id.toString(),
-      jobId: r.job_id,
-      status: r.status,
+    // Use Prisma's native methods instead of raw SQL
+    const jobs = await prisma.job.findMany({
+      where: {
+        OR: [
+          { jobId: { contains: queryStr, mode: 'insensitive' } },
+          { client: { fullName: { contains: queryStr, mode: 'insensitive' } } },
+          { client: { phone: { contains: queryStr, mode: 'insensitive' } } },
+        ],
+      },
+      include: {
+        client: true,
+        device: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 20,
+    });
+
+    res.json(jobs.map(job => ({
+      id: job.id,
+      jobId: job.jobId,
+      status: job.status,
       client: { 
-        fullName: r.client_name || 'Unknown Client', 
-        phone: r.client_phone || 'N/A' 
+        fullName: job.client?.fullName || 'Unknown Client', 
+        phone: job.client?.phone || 'N/A' 
       },
       device: { 
-        brand: r.brand || '', 
-        model: r.model || '' 
+        brand: job.device?.brand || '', 
+        model: job.device?.model || '' 
       }
     })));
   } catch (err) {
     console.error('Public search error:', err);
     res.status(500).json({ error: 'Search failed' });
   }
-}); 
+});
 
 // Error handling
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
