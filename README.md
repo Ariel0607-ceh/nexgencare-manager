@@ -1,6 +1,6 @@
 # NexGenCare Manager 🏥
 
-> **A comprehensive, AI-assisted care management platform designed to streamline operations, enhance client communication, and secure administrative workflows.**
+> **A comprehensive, AI-assisted care management platform designed to streamline operations, enhance client communication and secure administrative workflows.**
 
 ## 🌐 Live Prototype
 Experience the live application here: **[nexgencare-manager.vercel.app](https://nexgencare-manager.vercel.app/)**
@@ -10,7 +10,7 @@ Experience the live application here: **[nexgencare-manager.vercel.app](https://
 ## 📊 Business Overview
 *Note: This project was developed as part of a business assessment project.*
 
-NexGenCare Manager addresses the growing need for efficient, secure, and user-friendly administrative tools in the healthcare and caregiving sector. Our platform provides a centralized hub for managing client data, staff assignments, and day-to-day operations, bridging the gap between care providers and care receivers.
+NexGenCare Manager addresses the growing need for efficient, secure and user-friendly administrative tools in the healthcare and caregiving sector. Our platform provides a centralized hub for managing client data, staff assignments and day-to-day operations, bridging the gap between care providers and care receivers.
 
 **Key Value Propositions:**
 * **Operational Efficiency:** Reduces manual paperwork and administrative overhead through a centralized digital management system.
@@ -27,13 +27,13 @@ NexGenCare Manager addresses the growing need for efficient, secure, and user-fr
 * **Protected Administrative Routes:** Unauthorized users are automatically redirected away from sensitive management pages.
 
 ### 👨‍💼 Administrator Portal
-* **Command Dashboard (`/admin/dashboard`):** A high-level overview of facility operations, active clients, and system status.
-* **Client Management (`/admin/clients`):** A comprehensive directory to view, add, and manage client profiles and care requirements.
+* **Command Dashboard (`/admin/dashboard`):** A high-level overview of facility operations, active clients and system status.
+* **Client Management (`/admin/clients`):** A comprehensive directory to view, add and manage client profiles and care requirements.
 * **Seamless Navigation:** Built with an intuitive sidebar/navbar layout for quick access to various management tools.
 
 ### 👤 Client Portal
 * **Dedicated Client Interface:** A default, welcoming portal for clients to log in and view their specific care plans and updates.
-* **Mobile-Responsive Design:** Fully accessible on smartphones, tablets, and desktops so clients can check in from anywhere.
+* **Mobile-Responsive Design:** Fully accessible on smartphones, tablets and desktops so clients can check in from anywhere.
 
 ### 🎨 UI/UX Design
 * **Modern Interface:** Built utilizing Shadcn UI (New York style) and Lucide Icons for a clean, professional aesthetic.
