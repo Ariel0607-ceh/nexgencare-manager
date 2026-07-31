@@ -1,73 +1,74 @@
-# React + TypeScript + Vite
+# NexGenCare Manager 🏥
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **A comprehensive, AI-assisted care management platform designed to streamline operations, enhance client communication, and secure administrative workflows.**
 
-Currently, two official plugins are available:
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://nexgencare-manager.vercel.app/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌐 Live Prototype
+Experience the live application here: **[nexgencare-manager.vercel.app](https://nexgencare-manager.vercel.app/)**
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📊 Business Overview
+*Note: This project was developed as part of a business assessment project.*
 
-## Expanding the ESLint configuration
+NexGenCare Manager addresses the growing need for efficient, secure, and user-friendly administrative tools in the healthcare and caregiving sector. Our platform provides a centralized hub for managing client data, staff assignments, and day-to-day operations, bridging the gap between care providers and care receivers.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+**Key Value Propositions:**
+* **Operational Efficiency:** Reduces manual paperwork and administrative overhead through a centralized digital management system.
+* **Data Security & Privacy:** Strict role-based access control (RBAC) ensures sensitive health and client data is only accessible to authorized personnel.
+* **Modern User Experience:** An intuitive, responsive interface that reduces the learning curve for staff and clients alike.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## ✨ Core Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 🔐 Security & Authentication
+* **Role-Based Access Control (RBAC):** Secure routing that strictly separates administrative privileges from client-facing views.
+* **Encrypted Sessions:** Utilizes JSON Web Tokens (JWT) for secure session management and `bcryptjs` for robust password hashing.
+* **Protected Administrative Routes:** Unauthorized users are automatically redirected away from sensitive management pages.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 👨‍💼 Administrator Portal
+* **Command Dashboard (`/admin/dashboard`):** A high-level overview of facility operations, active clients, and system status.
+* **Client Management (`/admin/clients`):** A comprehensive directory to view, add, and manage client profiles and care requirements.
+* **Seamless Navigation:** Built with an intuitive sidebar/navbar layout for quick access to various management tools.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 👤 Client Portal
+* **Dedicated Client Interface:** A default, welcoming portal for clients to log in and view their specific care plans and updates.
+* **Mobile-Responsive Design:** Fully accessible on smartphones, tablets, and desktops so clients can check in from anywhere.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 🎨 UI/UX Design
+* **Modern Interface:** Built utilizing Shadcn UI (New York style) and Lucide Icons for a clean, professional aesthetic.
+* **Theme Support:** Configured with advanced CSS variables to support dynamic Light and Dark modes.
+
+---
+
+## 🛠️ Technology Stack
+
+**Frontend (Client & UI)**
+* React.js (Component-based UI)
+* React Router (Client-side routing)
+* Tailwind CSS (Utility-first styling)
+* Shadcn UI (Accessible component library)
+* Vercel (Cloud hosting and deployment)
+
+**Backend (API & Database)**
+* Node.js & Express.js (Server framework)
+* PostgreSQL (Relational database)
+* Prisma ORM (Database schema management and querying)
+
+---
+
+## 🚀 Local Development Setup
+
+If you are grading or evaluating this project and wish to run it locally, please follow these steps:
+
+### Prerequisites
+* Node.js (v16+)
+* PostgreSQL database
+
+### Installation
+1. **Clone the repository:**
+   ```bash
+   git clone [Your-Repository-URL]
+   cd nexgencare-manager
