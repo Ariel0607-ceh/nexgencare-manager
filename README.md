@@ -2,8 +2,6 @@
 
 > **A comprehensive, AI-assisted care management platform designed to streamline operations, enhance client communication, and secure administrative workflows.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://nexgencare-manager.vercel.app/)
-
 ## 🌐 Live Prototype
 Experience the live application here: **[nexgencare-manager.vercel.app](https://nexgencare-manager.vercel.app/)**
 
@@ -58,17 +56,3 @@ NexGenCare Manager addresses the growing need for efficient, secure, and user-fr
 * Prisma ORM (Database schema management and querying)
 
 ---
-
-## 🚀 Local Development Setup
-
-If you are grading or evaluating this project and wish to run it locally, please follow these steps:
-
-### Prerequisites
-* Node.js (v16+)
-* PostgreSQL database
-
-### Installation
-1. **Clone the repository:**
-   ```bash
-   git clone [Your-Repository-URL]
-   cd nexgencare-manager
