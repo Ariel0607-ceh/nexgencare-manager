@@ -56,3 +56,21 @@ NexGenCare Manager addresses the growing need for efficient, secure and user-fri
 * Prisma ORM (Database schema management and querying)
 
 ---
+
+## 🤖 AI-Assisted Development & Learning
+
+This project was developed with the assistance of AI tools such as **Claude and Kimi**, which I used primarily as learning and exploration partners throughout the development process.
+
+Rather than relying on AI to simply generate the entire application, I used these tools to:
+
+* **Explore unfamiliar technologies and frameworks** such as React, Express.js, Prisma, PostgreSQL and modern UI libraries.
+* **Understand new concepts and implementation approaches** by asking questions, comparing solutions and examining generated examples.
+* **Prototype and iterate on features** before refining the implementation based on my own understanding and requirements.
+* **Debug and troubleshoot issues** encountered during development while learning why a particular solution worked.
+* **Experiment with different UI/UX approaches** and explore how modern web applications can be structured.
+
+My existing programming knowledge and understanding of software development were used to guide the implementation, evaluate AI-generated suggestions and adapt the code to the project's requirements.
+
+The project therefore represents not only an application development exercise but also an exploration of how **AI-assisted development can be used as a learning tool to expand my technical knowledge and development capabilities**.
+
+---
